@@ -14,10 +14,6 @@
     margin: auto;
   }
 
-  nav {
-    margin-bottom: 20px;
-  }
-
   nav a {
     margin-right: 15px;
     text-decoration: none;
@@ -38,14 +34,14 @@
     color: #555;
   }
 
-  /* Esconde banner do Google Translate */
-  .goog-te-banner-frame.skiptranslate { display: none !important; }
-  body { top: 0px !important; position: static !important; }
+  /* Banner Google Translate escondido */
+  .goog-te-banner-frame.skiptranslate {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
 
-<!-- MENU -->
 <nav>
   <a href="index.html">Início</a>
   <a href="liturgia.html">Liturgia Diária</a>
@@ -53,13 +49,12 @@
 
 <h1>Liturgia Diária</h1>
 
-<!-- Tradutor Google automático -->
 <div id="google_translate_element" style="display:none;"></div>
 
 <div id="liturgia">Carregando leituras...</div>
 
 <script>
-  // Força tradução automática para português
+  // Força tradução automática
   document.cookie = "googtrans=/en/pt; path=/";
 
   function googleTranslateElementInit() {
@@ -68,6 +63,14 @@
       'google_translate_element'
     );
   }
+
+  // Remove banner se aparecer
+  function removerBanner() {
+    const banner = document.querySelector('.goog-te-banner-frame.skiptranslate');
+    if(banner) banner.remove();
+    document.body.style.top = '0px';
+  }
+  setInterval(removerBanner, 500);
 
   async function carregarLiturgia() {
     const leituras = {
