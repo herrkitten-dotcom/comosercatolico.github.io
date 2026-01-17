@@ -8,8 +8,14 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      line-height: 1.7;
       padding: 20px;
-      line-height: 1.6;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    nav {
+      margin-bottom: 20px;
     }
 
     nav a {
@@ -20,39 +26,54 @@
     }
 
     h1 {
-      margin-top: 20px;
+      margin-bottom: 10px;
     }
 
     .leitura {
-      margin-bottom: 40px;
+      margin-bottom: 50px;
     }
 
     .referencia {
       font-style: italic;
       color: #555;
     }
+
+    button {
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 15px 0;
+    }
   </style>
 </head>
 <body>
 
-  <!-- MENU DO SEU SITE -->
+  <!-- MENU DO SITE -->
   <nav>
     <a href="index.html">Início</a>
     <a href="liturgia.html">Liturgia Diária</a>
   </nav>
-     <p id="leitura">
-In the beginning many were gathered together, so that there was no more room...
-</p>
 
-<button onclick="traduzir()">Traduzir</button>
-  
   <h1>Liturgia Diária</h1>
 
-  <div id="liturgia">Carregando liturgia...</div>
+  <p>
+    <button onclick="traduzirPagina()">
+      🌍 Traduzir textos para Português
+    </button>
+  </p>
+
+  <div id="liturgia">Carregando leituras...</div>
 
   <script>
+    function traduzirPagina() {
+      const urlAtual = window.location.href;
+      const traduzida =
+        "https://translate.google.com/translate?hl=pt-BR&sl=en&tl=pt&u=" +
+        encodeURIComponent(urlAtual);
+      window.open(traduzida, "_blank");
+    }
+
     async function carregarLiturgia() {
-      // REFERÊNCIAS DE EXEMPLO (depois automatizamos)
       const leituras = {
         primeira: "1 Samuel 8:4-7,10-22",
         salmo: "Psalm 89:16-17,18-19",
@@ -60,7 +81,6 @@ In the beginning many were gathered together, so that there was no more room...
       };
 
       let html = "";
-
       html += await carregarLeitura("Primeira Leitura", leituras.primeira);
       html += await carregarLeitura("Salmo", leituras.salmo);
       html += await carregarLeitura("Evangelho", leituras.evangelho);
@@ -92,20 +112,14 @@ In the beginning many were gathered together, so that there was no more room...
         return `
           <div class="leitura">
             <h2>${titulo}</h2>
-            <p>Erro ao carregar a leitura.</p>
+            <p>Erro ao carregar esta leitura.</p>
           </div>
         `;
       }
     }
-</script>
+
     carregarLiturgia();
- <script>
-function traduzir() {
-  document.getElementById("leitura").innerText =
-  "No princípio, muitos se reuniram, de modo que já não havia espaço, nem mesmo junto à porta...";
-}
-</script>
+  </script>
 
 </body>
- 
-  
+</html>
