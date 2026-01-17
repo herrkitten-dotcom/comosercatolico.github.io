@@ -7,7 +7,7 @@ const liturgiaHoje = {
 
 async function buscarLeitura(titulo, referencia) {
   const ref = encodeURIComponent(referencia);
-  const url = `https://bible-api.com/${ref}?translation=tb`;
+  const url = `https://bibliaonline.com/${ref}?translation=tb`;
 
   const res = await fetch(url);
   const data = await res.json();
