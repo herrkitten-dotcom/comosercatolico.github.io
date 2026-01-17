@@ -94,15 +94,17 @@
     }
 
     carregarLiturgia();
-  </script>
-
-  <script>
-
+ <script>
+function traduzir() {
+  document.getElementById("leitura").innerText =
+  "No princípio, muitos se reuniram, de modo que já não havia espaço, nem mesmo junto à porta...";
+}
 </script>
 
 </body>
-</html>function traduzir() {
-  document.getElementById("leitura").innerText =
-  "No princípio, Deus criou o céu e a terra.";
-}
-    <button onclick="traduzir()">Traduzir</button>
+  <p id="leitura">
+In the beginning many were gathered together, so that there was no more room...
+</p>
+
+<button onclick="traduzir()">Traduzir</button>
+  
