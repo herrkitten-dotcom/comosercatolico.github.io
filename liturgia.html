@@ -9,9 +9,9 @@
   body {
     font-family: Arial, sans-serif;
     line-height: 1.7;
-    padding: 20px;
     max-width: 900px;
     margin: auto;
+    padding: 20px;
   }
 
   nav {
@@ -30,30 +30,18 @@
   }
 
   .leitura {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
   }
 
-  .referencia {
-    font-style: italic;
-    color: #555;
-  }
-
-  /* Banner Google Translate reduzido */
-  .goog-te-banner-frame.skiptranslate {
-    height: 20px !important;
-    min-height: 0px !important;
-    overflow: hidden !important;
-    font-size: 10px !important;
-  }
-
-  body {
-    top: 20px !important;
+  .titulo {
+    font-size: 1.3em;
+    margin-top: 30px;
   }
 </style>
 </head>
 <body>
 
-<!-- Menu do site -->
+<!-- MENU -->
 <nav>
   <a href="index.html">Início</a>
   <a href="liturgia.html">Liturgia Diária</a>
@@ -61,87 +49,39 @@
 
 <h1>Liturgia Diária</h1>
 
-<!-- Tradutor Google oculto -->
-<div id="google_translate_element" style="display:none;"></div>
-
-<div id="liturgia">Carregando leituras...</div>
+<div id="conteudo">
+  Carregando a liturgia de hoje...
+</div>
 
 <script>
-  // Força tradução automática para português
-  document.cookie = "googtrans=/en/pt; path=/";
+async function carregarLiturgia() {
+  const url = "https://cors.isomorphic-git.org/https://liturgia.cancaonova.com/pb/";
 
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      { pageLanguage: 'en', includedLanguages: 'pt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
-      'google_translate_element'
-    );
-  }
+  try {
+    const resposta = await fetch(url);
+    const html = await resposta.text();
 
-  // Remove o banner rapidamente
-  function esconderBannerRapido() {
-    const banner = document.querySelector('.goog-te-banner-frame.skiptranslate');
-    if (banner) banner.style.display = 'none';
-    document.body.style.top = '0px';
-  }
-  // Executa várias vezes para garantir que desapareça
-  let tentativas = 0;
-  const intervalo = setInterval(() => {
-    esconderBannerRapido();
-    tentativas++;
-    if(tentativas > 15) clearInterval(intervalo);
-  }, 150);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
 
-  // Função para carregar leituras
-  async function carregarLiturgia() {
-    const leituras = {
-      primeira: "1 Samuel 8:4-7,10-22",
-      salmo: "Psalm 89:16-17,18-19",
-      evangelho: "Mark 2:1-12"
-    };
+    const liturgia = doc.querySelector(".liturgia");
 
-    let html = "";
-    html += await carregarLeitura("Primeira Leitura", leituras.primeira);
-    html += await carregarLeitura("Salmo", leituras.salmo);
-    html += await carregarLeitura("Evangelho", leituras.evangelho);
-
-    document.getElementById("liturgia").innerHTML = html;
-  }
-
-  async function carregarLeitura(titulo, referencia) {
-    const refApi = referencia.replace(/ /g, "%20");
-    const url = `https://bible-api.com/${refApi}?translation=web`;
-
-    try {
-      const resposta = await fetch(url);
-      const dados = await resposta.json();
-
-      let texto = "";
-      dados.verses.forEach(v => {
-        texto += `<p><strong>${v.verse}</strong> ${v.text}</p>`;
-      });
-
-      return `
-        <div class="leitura">
-          <h2>${titulo}</h2>
-          <p class="referencia">${referencia}</p>
-          ${texto}
-        </div>
-      `;
-    } catch {
-      return `
-        <div class="leitura">
-          <h2>${titulo}</h2>
-          <p>Erro ao carregar esta leitura.</p>
-        </div>
-      `;
+    if (!liturgia) {
+      document.getElementById("conteudo").innerText =
+        "Não foi possível carregar a liturgia.";
+      return;
     }
+
+    document.getElementById("conteudo").innerHTML = liturgia.innerHTML;
+
+  } catch (erro) {
+    document.getElementById("conteudo").innerText =
+      "Erro ao carregar a liturgia.";
   }
+}
 
-  carregarLiturgia();
+carregarLiturgia();
 </script>
-
-<!-- Google Translate -->
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>
