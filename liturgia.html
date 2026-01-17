@@ -10,13 +10,14 @@
   margin:0 auto;
   height: 600px;     /* o quanto aparece */
   overflow: hidden; /* corta o resto */
+  pointer-events: none;/* ❌ não clicável (vira foto) */
 }
 
 .iframe-liturgia {
   width: 70%;
   height: 1200px;   /* página inteira */
   border: none;
-
+  display: block:
   transform: translateY(-397px);
 }
   .iframe-corte {
@@ -37,6 +38,7 @@
   width: 100%;
   height: 800px;     /* altura visível */
   overflow: hidden; /* evita rolagem extra */
+  pointer-events: none;/* ❌ não clicável (vira foto) */
   position: fixed;
 }
   .iframe-zoom {
