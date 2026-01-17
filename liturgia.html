@@ -1,125 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Liturgia Diária</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liturgia Diária</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.7;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.7;
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+  }
 
-    nav {
-      margin-bottom: 20px;
-    }
+  nav {
+    margin-bottom: 20px;
+  }
 
-    nav a {
-      margin-right: 15px;
-      text-decoration: none;
-      font-weight: bold;
-      color: #003366;
-    }
+  nav a {
+    margin-right: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #003366;
+  }
 
-    h1 {
-      margin-bottom: 10px;
-    }
+  h1 {
+    margin-bottom: 10px;
+  }
 
-    .leitura {
-      margin-bottom: 50px;
-    }
+  .leitura {
+    margin-bottom: 50px;
+  }
 
-    .referencia {
-      font-style: italic;
-      color: #555;
-    }
+  .referencia {
+    font-style: italic;
+    color: #555;
+  }
 
-    button {
-      padding: 8px 14px;
-      font-size: 14px;
-      cursor: pointer;
-      margin: 15px 0;
-    }
-  </style>
+  /* Esconde banner do Google Translate */
+  .goog-te-banner-frame.skiptranslate { display: none !important; }
+  body { top: 0px !important; position: static !important; }
+</style>
 </head>
 <body>
 
-  <!-- MENU DO SITE -->
-  <nav>
-    <a href="index.html">Início</a>
-    <a href="liturgia.html">Liturgia Diária</a>
-  </nav>
+<!-- MENU -->
+<nav>
+  <a href="index.html">Início</a>
+  <a href="liturgia.html">Liturgia Diária</a>
+</nav>
 
-  <h1>Liturgia Diária</h1>
+<h1>Liturgia Diária</h1>
 
-  <p>
-    <button onclick="traduzirPagina()">
-      🌍 Traduzir textos para Português
-    </button>
-  </p>
+<!-- Tradutor Google automático -->
+<div id="google_translate_element" style="display:none;"></div>
 
-  <div id="liturgia">Carregando leituras...</div>
+<div id="liturgia">Carregando leituras...</div>
 
-  <script>
-    function traduzirPagina() {
-      const urlAtual = window.location.href;
-      const traduzida =
-        "https://translate.google.com/translate?hl=pt-BR&sl=en&tl=pt&u=" +
-        encodeURIComponent(urlAtual);
-      window.open(traduzida, "_blank");
+<script>
+  // Força tradução automática para português
+  document.cookie = "googtrans=/en/pt; path=/";
+
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      { pageLanguage: 'en', includedLanguages: 'pt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
+      'google_translate_element'
+    );
+  }
+
+  async function carregarLiturgia() {
+    const leituras = {
+      primeira: "1 Samuel 8:4-7,10-22",
+      salmo: "Psalm 89:16-17,18-19",
+      evangelho: "Mark 2:1-12"
+    };
+
+    let html = "";
+    html += await carregarLeitura("Primeira Leitura", leituras.primeira);
+    html += await carregarLeitura("Salmo", leituras.salmo);
+    html += await carregarLeitura("Evangelho", leituras.evangelho);
+
+    document.getElementById("liturgia").innerHTML = html;
+  }
+
+  async function carregarLeitura(titulo, referencia) {
+    const refApi = referencia.replace(/ /g, "%20");
+    const url = `https://bible-api.com/${refApi}?translation=web`;
+
+    try {
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+
+      let texto = "";
+      dados.verses.forEach(v => {
+        texto += `<p><strong>${v.verse}</strong> ${v.text}</p>`;
+      });
+
+      return `
+        <div class="leitura">
+          <h2>${titulo}</h2>
+          <p class="referencia">${referencia}</p>
+          ${texto}
+        </div>
+      `;
+    } catch {
+      return `
+        <div class="leitura">
+          <h2>${titulo}</h2>
+          <p>Erro ao carregar esta leitura.</p>
+        </div>
+      `;
     }
+  }
 
-    async function carregarLiturgia() {
-      const leituras = {
-        primeira: "1 Samuel 8:4-7,10-22",
-        salmo: "Psalm 89:16-17,18-19",
-        evangelho: "Mark 2:1-12"
-      };
+  carregarLiturgia();
+</script>
 
-      let html = "";
-      html += await carregarLeitura("Primeira Leitura", leituras.primeira);
-      html += await carregarLeitura("Salmo", leituras.salmo);
-      html += await carregarLeitura("Evangelho", leituras.evangelho);
-
-      document.getElementById("liturgia").innerHTML = html;
-    }
-
-    async function carregarLeitura(titulo, referencia) {
-      const refApi = referencia.replace(/ /g, "%20");
-      const url = `https://bible-api.com/${refApi}?translation=web`;
-
-      try {
-        const resposta = await fetch(url);
-        const dados = await resposta.json();
-
-        let texto = "";
-        dados.verses.forEach(v => {
-          texto += `<p><strong>${v.verse}</strong> ${v.text}</p>`;
-        });
-
-        return `
-          <div class="leitura">
-            <h2>${titulo}</h2>
-            <p class="referencia">${referencia}</p>
-            ${texto}
-          </div>
-        `;
-      } catch {
-        return `
-          <div class="leitura">
-            <h2>${titulo}</h2>
-            <p>Erro ao carregar esta leitura.</p>
-          </div>
-        `;
-      }
-    }
-
-    carregarLiturgia();
-  </script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>
